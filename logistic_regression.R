@@ -142,5 +142,22 @@ Log_model  <- glm(everwrk~age_p+r_maritl, data=NH11, family="binomial")
 summary(Log_model)
 coef(summary(Log_model))
 
+### Logistic Regression Coefficienct for Log_model
+Log_Model_table <- coef(summary(Log_model))
+Log_Model_table[, "Estimate"] <- exp(coef(Log_model))
+Log_Model_table
+
+#Generating Predicted Values for  each level of martial status 
+
+# Create a dataset with predictors set at desired levels
+predData <- with(NH11,
+                 expand.grid( age_p = mean(age_p,na.rm = TRUE), r_maritl = r_maritl))
+colnames(predData)
+# predict probability of working at each marriage levels
+
+cbind(predData, predict(Log_model, type = "response",
+                        se.fit = TRUE, interval="confidence",
+                        newdata = predData))
+
 ## Plot the results of regression
 plot(allEffects(Log_model))
